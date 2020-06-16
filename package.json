@@ -1,6 +1,6 @@
 {
   "name": "hacktiv8-restriction",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Hacktiv8 restriction checking module for student code",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,6 +11,7 @@
   "author": "adilpratama71",
   "license": "ISC",
   "devDependencies": {
+    "@types/callsite": "^1.0.30",
     "@types/node": "^14.0.13",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5"
@@ -19,5 +20,7 @@
     "type": "git",
     "url": "https://github.com/adilpratama71/h8-restriction.git"
   },
-  "dependencies": {}
+  "dependencies": {
+    "callsite": "^1.0.0"
+  }
 }

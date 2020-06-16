@@ -1,7 +1,11 @@
 import fs from 'fs'
 import readline from 'readline'
+import callsite from 'callsite'
+import path from 'path'
 
 function checkRestriction(filepath: string): Promise<string | null> {
+  const stack = callsite()
+  const functionDirectoryCalledPath = path.dirname(stack[1].getFileName())
   const rules = new RegExp(
     `(.reduce\\()|(.map\\()|
     (.filter\\()|(.indexOf\\()|(.toLocaleString\\()|
@@ -12,7 +16,7 @@ function checkRestriction(filepath: string): Promise<string | null> {
   )
 
   const rl = readline.createInterface({
-    input: fs.createReadStream(filepath)
+    input: fs.createReadStream(functionDirectoryCalledPath + '/' + filepath)
   })
 
   return new Promise(resolve => {
