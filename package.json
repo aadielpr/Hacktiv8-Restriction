@@ -1,5 +1,5 @@
 {
-  "name": "h8-restriction",
+  "name": "hacktiv8-restriction",
   "version": "1.0.0",
   "description": "Hacktiv8 restriction checking module for student code",
   "main": "dist/index.js",
