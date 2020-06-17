@@ -1,5 +1,5 @@
 <div align="center">
-<h1>Hacktiv8 Restriction Library</h1>
+<h1>Hacktiv8 Restriction</h1>
 
 <a href="https://hacktiv8.com/">
   <img
