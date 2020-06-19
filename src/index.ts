@@ -2,7 +2,6 @@ import fs from 'fs'
 import readline, { ReadLine } from 'readline'
 import callsite, { CallSite } from 'callsite'
 import path from 'path'
-console.log([1].concat([2, 3]))
 
 class Restriction {
   rl: ReadLine
@@ -20,19 +19,31 @@ class Restriction {
   }
 
   set rules(newRules: string[]) {
-    let arrayOfNewRules = newRules.map(el => '(.' + el + '\\' + '()')
-    let splitedRules = this._rules.split('|')
-    this._rules = splitedRules.concat(arrayOfNewRules).join('|')
+    let mappingRules = newRules.map(el => {
+      if (!this.checkNewRules(el)) {
+        throw new Error(`${el} is not an array constructor function`)
+      }
+      return '(.' + el + '\\' + '()'
+    })
+    let currentRules = this._rules.split('|')
+    this._rules = currentRules.concat(mappingRules).join('|')
   }
 
-  get rules() {
+  get rules(): string[] {
     return this._rules.split('|')
   }
 
-  private initReadline() {
+  private initReadline(): ReadLine {
     return readline.createInterface({
       input: fs.createReadStream(this.streamPath)
     })
+  }
+
+  private checkNewRules(rules: any): boolean {
+    if (Array.prototype[rules]) {
+      return true
+    }
+    return false
   }
 
   public readCode(): Promise<string | null> {
