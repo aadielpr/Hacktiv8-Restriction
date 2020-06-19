@@ -8,7 +8,7 @@ class Restriction {
   stack: CallSite[]
   functionCalledPath: string
   streamPath: string
-  private _rules: string
+  _rules: string
 
   constructor(filepath: string) {
     this.stack = callsite()
