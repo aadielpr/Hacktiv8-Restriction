@@ -10,7 +10,7 @@
   />
 </a>
 
-<p>Hacktiv8 Restriction is a library for checking restriction rules in hacktiv8 students code</p>
+<p>Hacktiv8 Restriction is a library for checking restriction rules in hacktiv8 student's code</p>
 
 [Visit Us](https://hacktiv8.com/)
 
@@ -37,15 +37,17 @@ function myFunction() {
 checkRestriction.js
 
 ```js
-const checkRestriction = require('hacktiv8-restriction')
+const Restriction = require('hacktiv8-restriction')
 // checking index.js script for restriction rules
+// init
+const checkRestriction = new Restriction('index.js')
 
 // promise
-checkRestriction('index.js').then(result => console.log(result)) // arrayOfNumbers.map(el => el * 2) : 3
+checkRestriction.readCode().then(result => console.log(result)) // arrayOfNumbers.map(el => el * 2) : 3
 
 // async / await
 async function checkStudentRestriction() {
-  const result = await checkRestriction('index.js')
+  const result = await checkRestriction().readCode()
   return result // arrayOfNumbers.map(el => el * 2) : 3
 }
 ```
@@ -62,12 +64,14 @@ function myFunction() {
 src/checkRestriction.js
 
 ```js
-checkRestriction('../js/index.js').then(result => console.log(result)) // arrayOfNumbers.map(el => el * 2) : 3
+const checkRestriction = new Restriction('../js/index.js')
+
+checkRestriction.readCode().then(result => console.log(result)) // arrayOfNumbers.map(el => el * 2) : 3
 ```
 
-It will return null (if it didntt found) or string (line of code and line number) value
+It will return null (if it didn't found) or string (line of code and line number) value
 
-This package will detect all of following function below:
+This package will detect all of following function below (default):
 
 ```js
   .map()
@@ -90,4 +94,12 @@ This package will detect all of following function below:
   .of()
   new Set()
 
+```
+
+You can add new syntax to the restriction rules:
+
+```js
+checkRestriction.rules = ['concat', 'split'] // now package will check the concat and split syntax too
+
+checkRestriction.readCode().then(result => console.log(result))
 ```
