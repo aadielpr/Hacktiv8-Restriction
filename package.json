@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "homepage": "https://github.com/adilpratama71/h8-restriction",
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "dev": "npx ts-node src/index.ts"
   },
   "author": "adilpratama71",
   "license": "ISC",
