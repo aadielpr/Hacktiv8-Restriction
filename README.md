@@ -47,7 +47,7 @@ checkRestriction.readCode().then(result => console.log(result)) // arrayOfNumber
 
 // async / await
 async function checkStudentRestriction() {
-  const result = await checkRestriction().readCode()
+  const result = await checkRestriction.readCode()
   return result // arrayOfNumbers.map(el => el * 2) : 3
 }
 ```
