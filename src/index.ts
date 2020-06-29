@@ -8,7 +8,7 @@ class Restriction {
   stack: CallSite[]
   functionCalledPath: string
   streamPath: string
-  _rules: string
+  private _rules: string
 
   constructor(filepath: string) {
     this.stack = callsite()
@@ -40,7 +40,7 @@ class Restriction {
   }
 
   private checkNewRules(rules: any): boolean {
-    if (Array.prototype[rules]) {
+    if (Array.prototype[rules] || String.prototype[rules]) {
       return true
     }
     return false
