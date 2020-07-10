@@ -23,7 +23,7 @@ class Restriction {
       if (!this.checkNewRules(el)) {
         throw new Error(`${el} is not an array constructor function`)
       }
-      return '(.' + el + '\\' + '()'
+      return '(\\.' + el + '\\' + '()'
     })
     let currentRules = this._rules.split('|')
     this._rules = currentRules.concat(mappingRules).join('|')
