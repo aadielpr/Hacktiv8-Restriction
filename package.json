@@ -1,6 +1,6 @@
 {
   "name": "hacktiv8-restriction",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Hacktiv8 restriction checking module for student code",
   "main": "index.js",
   "types": "index.d.ts",
