@@ -14,7 +14,7 @@ class Restriction {
     this.stack = callsite()
     this.functionCalledPath = path.dirname(this.stack[1].getFileName())
     this.streamPath = this.functionCalledPath + '/' + filepath
-    this._rules = `(.reduce\\()|(.map\\()|(.filter\\()|(.indexOf\\()|(.toLocaleString\\()|(.lastIndexOf\\()|(.reverse\\()|(.reduceRight\\()|(.includes\\()|(.flat\\()|(.flatMap\\()|(.find\\()|(.findIndex\\()|(.fill\\()|(.every\\()|(.copyWithin\\()|(.entries\\()|(.of\\()|(new Set\\()`
+    this._rules = `(\\.reduce\\()|(\\.map\\()|(\\.filter\\()|(\\.indexOf\\()|(\\.toLocaleString\\()|(\\.lastIndexOf\\()|(\\.reverse\\()|(\\.reduceRight\\()|(\\.includes\\()|(\\.flat\\()|(\\.flatMap\\()|(\\.find\\()|(\\.findIndex\\()|(\\.fill\\()|(\\.every\\()|(\\.copyWithin\\()|(\\.entries\\()|(\\bof\\b)|(new Set\\()`
     this.rl = this.initReadline()
   }
 
@@ -66,3 +66,4 @@ class Restriction {
 }
 
 export = Restriction
+

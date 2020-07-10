@@ -2,8 +2,8 @@
   "name": "hacktiv8-restriction",
   "version": "1.0.7",
   "description": "Hacktiv8 restriction checking module for student code",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "homepage": "https://github.com/adilpratama71/h8-restriction",
   "scripts": {
     "build": "rm -rf dist && tsc",
