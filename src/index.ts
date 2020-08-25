@@ -8,29 +8,39 @@ class Restriction {
   stack: CallSite[]
   functionCalledPath: string
   streamPath: string
-  private _rules: string
+  private _rules: string[]
 
   constructor(filepath: string) {
     this.stack = callsite()
     this.functionCalledPath = path.dirname(this.stack[1].getFileName())
     this.streamPath = this.functionCalledPath + '/' + filepath
-    this._rules = `(\\.reduce\\()|(\\.map\\()|(\\.filter\\()|(\\.indexOf\\()|(\\.toLocaleString\\()|(\\.lastIndexOf\\()|(\\.reverse\\()|(\\.reduceRight\\()|(\\.includes\\()|(\\.flat\\()|(\\.flatMap\\()|(\\.find\\()|(\\.findIndex\\()|(\\.fill\\()|(\\.every\\()|(\\.copyWithin\\()|(\\.entries\\()|(\\bof\\b)|(new Set\\()`
+    this._rules = Object.getOwnPropertyNames(Array.prototype).filter(
+      el =>
+        ![
+          'push',
+          'shift',
+          'unshift',
+          'pop',
+          'splice',
+          'slice',
+          'split'
+        ].includes(el)
+    )
+
     this.rl = this.initReadline()
   }
 
   set rules(newRules: string[]) {
-    let mappingRules = newRules.map(el => {
-      if (!this.checkNewRules(el)) {
-        throw new Error(`${el} is not an array constructor function`)
-      }
-      return '(\\.' + el + '\\' + '()'
-    })
-    let currentRules = this._rules.split('|')
-    this._rules = currentRules.concat(mappingRules).join('|')
+    this.checkNewRules(newRules)
+    this._rules = this._rules.concat(newRules)
   }
 
   get rules(): string[] {
-    return this._rules.split('|')
+    return this._rules
+  }
+
+  set popRules(oldRules: string[]) {
+    this._rules = this._rules.filter(el => !oldRules.includes(el))
   }
 
   private initReadline(): ReadLine {
@@ -39,18 +49,35 @@ class Restriction {
     })
   }
 
-  private checkNewRules(rules: any): boolean {
-    if (Array.prototype[rules] || String.prototype[rules]) {
-      return true
+  private checkNewRules(rules: any[]): void {
+    const mathMethods = Object.getOwnPropertyNames(Math)
+    rules.forEach(el => {
+      if (
+        !Array.prototype[el] &&
+        !String.prototype[el] &&
+        mathMethods.indexOf(el) === -1
+      ) {
+        throw new Error(`${el} is not javascript method`)
+      }
+    })
+    const alreadyHas = this._rules.find(el => rules.includes(el))
+    if (alreadyHas) {
+      throw new Error(`${alreadyHas} already available in rules`)
     }
-    return false
+  }
+
+  private rulesToRegexFormat(): string {
+    const regexFormat = this._rules.map(el => '(\\.' + el + '\\' + '()')
+    regexFormat.push('(new Set\\()')
+    return regexFormat.join('|')
   }
 
   public readCode(): Promise<string | null> {
     return new Promise(resolve => {
       let lineNumber = 1
       let result: null | string = null
-      let pattern = new RegExp(this._rules, 'g')
+      let rulesRegexFormat = this.rulesToRegexFormat()
+      let pattern = new RegExp(rulesRegexFormat, 'g')
       this.rl
         .on('line', input => {
           if (pattern.test(input)) {
@@ -66,4 +93,3 @@ class Restriction {
 }
 
 export = Restriction
-
