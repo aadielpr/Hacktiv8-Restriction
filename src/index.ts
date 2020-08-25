@@ -14,7 +14,7 @@ class Restriction {
     this.stack = callsite()
     this.functionCalledPath = path.dirname(this.stack[1].getFileName())
     this.streamPath = this.functionCalledPath + '/' + filepath
-    this._rules = `(\\.reduce\\()|(\\.map\\()|(\\.filter\\()|(\\.indexOf\\()|(\\.toLocaleString\\()|(\\.lastIndexOf\\()|(\\.reverse\\()|(\\.reduceRight\\()|(\\.includes\\()|(\\.flat\\()|(\\.flatMap\\()|(\\.find\\()|(\\.findIndex\\()|(\\.fill\\()|(\\.every\\()|(\\.copyWithin\\()|(\\.entries\\()|(\\bof\\b)|(new Set\\()`
+    this._rules = `(\\.reduce\\()|(\\.map\\()|(\\.filter\\()|(\\.indexOf\\()|(\\.toLocaleString\\()|(\\.lastIndexOf\\()|(\\.reverse\\()|(\\.reduceRight\\()|(\\.includes\\()|(\\.flat\\()|(\\.flatMap\\()|(\\.find\\()|(\\.findIndex\\()|(\\.fill\\()|(\\.every\\()|(\\.copyWithin\\()|(\\.entries\\()|(new Set\\()`
     this.rl = this.initReadline()
   }
 
@@ -31,6 +31,14 @@ class Restriction {
 
   get rules(): string[] {
     return this._rules.split('|')
+  }
+
+  set popRules(oldRules: string[]) {
+    let mappingRules = oldRules.map(el => '(\\.' + el + '\\' + '()')
+    let currentRules = this._rules.split('|')
+    this._rules = currentRules
+      .filter(el => !mappingRules.includes(el))
+      .join('|')
   }
 
   private initReadline(): ReadLine {
@@ -66,4 +74,3 @@ class Restriction {
 }
 
 export = Restriction
-
