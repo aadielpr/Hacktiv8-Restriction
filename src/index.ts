@@ -26,15 +26,13 @@ class Restriction {
           'split'
         ].includes(el)
     )
+
     this.rl = this.initReadline()
   }
 
   set rules(newRules: string[]) {
-    const isRule = this.checkNewRules(newRules)
-    if (isRule) {
-      throw new Error(`${isRule} is not javascript method`)
-    }
-    this._rules.concat(newRules)
+    this.checkNewRules(newRules)
+    this._rules = this._rules.concat(newRules)
   }
 
   get rules(): string[] {
@@ -42,11 +40,7 @@ class Restriction {
   }
 
   set popRules(oldRules: string[]) {
-    let mappingRules = oldRules.map(el => '(\\.' + el + '\\' + '()')
-    let currentRules = this._rules.split('|')
-    this._rules = currentRules
-      .filter(el => !mappingRules.includes(el))
-      .join('|')
+    this._rules = this._rules.filter(el => !oldRules.includes(el))
   }
 
   private initReadline(): ReadLine {
@@ -55,20 +49,35 @@ class Restriction {
     })
   }
 
-  private checkNewRules(rules: any[]): boolean {
+  private checkNewRules(rules: any[]): void {
+    const mathMethods = Object.getOwnPropertyNames(Math)
     rules.forEach(el => {
-      if (Array.prototype[el] || String.prototype[el]) {
-        return el
+      if (
+        !Array.prototype[el] &&
+        !String.prototype[el] &&
+        mathMethods.indexOf(el) === -1
+      ) {
+        throw new Error(`${el} is not javascript method`)
       }
     })
-    return false
+    const alreadyHas = this._rules.find(el => rules.includes(el))
+    if (alreadyHas) {
+      throw new Error(`${alreadyHas} already available in rules`)
+    }
+  }
+
+  private rulesToRegexFormat(): string {
+    const regexFormat = this._rules.map(el => '(\\.' + el + '\\' + '()')
+    regexFormat.push('(new Set\\()')
+    return regexFormat.join('|')
   }
 
   public readCode(): Promise<string | null> {
     return new Promise(resolve => {
       let lineNumber = 1
       let result: null | string = null
-      let pattern = new RegExp(this._rules, 'g')
+      let rulesRegexFormat = this.rulesToRegexFormat()
+      let pattern = new RegExp(rulesRegexFormat, 'g')
       this.rl
         .on('line', input => {
           if (pattern.test(input)) {
@@ -84,4 +93,3 @@ class Restriction {
 }
 
 export = Restriction
-// console.log(Object.getOwnPropertyNames(Math))
