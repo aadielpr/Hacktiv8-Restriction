@@ -74,3 +74,4 @@ class Restriction {
 }
 
 export = Restriction
+// console.log(Object.getOwnPropertyNames(Math))
