@@ -23,7 +23,8 @@ class Restriction {
           'pop',
           'splice',
           'slice',
-          'split'
+          'split',
+          'concat'
         ].includes(el)
     )
 

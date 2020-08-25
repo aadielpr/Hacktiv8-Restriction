@@ -99,7 +99,15 @@ This package will detect all of following function below (default):
 You can add new syntax to the restriction rules:
 
 ```js
-checkRestriction.rules = ['concat', 'split'] // now package will check the concat and split syntax too
+checkRestriction.rules = ['concat', 'split', 'ceil', 'min'] // now package will check the concat and split syntax too
+
+checkRestriction.readCode().then(result => console.log(result))
+```
+
+To remove your syntax from restriction rules:
+
+```js
+checkRestriction.popRules = ['map', 'filter'] // now package will check the concat and split syntax too
 
 checkRestriction.readCode().then(result => console.log(result))
 ```
