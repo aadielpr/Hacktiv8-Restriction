@@ -8,29 +8,37 @@ class Restriction {
   stack: CallSite[]
   functionCalledPath: string
   streamPath: string
-  private _rules: string
+  private _rules: string[]
 
   constructor(filepath: string) {
     this.stack = callsite()
     this.functionCalledPath = path.dirname(this.stack[1].getFileName())
     this.streamPath = this.functionCalledPath + '/' + filepath
-    this._rules = `(\\.reduce\\()|(\\.map\\()|(\\.filter\\()|(\\.indexOf\\()|(\\.toLocaleString\\()|(\\.lastIndexOf\\()|(\\.reverse\\()|(\\.reduceRight\\()|(\\.includes\\()|(\\.flat\\()|(\\.flatMap\\()|(\\.find\\()|(\\.findIndex\\()|(\\.fill\\()|(\\.every\\()|(\\.copyWithin\\()|(\\.entries\\()|(new Set\\()`
+    this._rules = Object.getOwnPropertyNames(Array.prototype).filter(
+      el =>
+        ![
+          'push',
+          'shift',
+          'unshift',
+          'pop',
+          'splice',
+          'slice',
+          'split'
+        ].includes(el)
+    )
     this.rl = this.initReadline()
   }
 
   set rules(newRules: string[]) {
-    let mappingRules = newRules.map(el => {
-      if (!this.checkNewRules(el)) {
-        throw new Error(`${el} is not an array constructor function`)
-      }
-      return '(\\.' + el + '\\' + '()'
-    })
-    let currentRules = this._rules.split('|')
-    this._rules = currentRules.concat(mappingRules).join('|')
+    const isRule = this.checkNewRules(newRules)
+    if (isRule) {
+      throw new Error(`${isRule} is not javascript method`)
+    }
+    this._rules.concat(newRules)
   }
 
   get rules(): string[] {
-    return this._rules.split('|')
+    return this._rules
   }
 
   set popRules(oldRules: string[]) {
@@ -47,10 +55,12 @@ class Restriction {
     })
   }
 
-  private checkNewRules(rules: any): boolean {
-    if (Array.prototype[rules] || String.prototype[rules]) {
-      return true
-    }
+  private checkNewRules(rules: any[]): boolean {
+    rules.forEach(el => {
+      if (Array.prototype[el] || String.prototype[el]) {
+        return el
+      }
+    })
     return false
   }
 
